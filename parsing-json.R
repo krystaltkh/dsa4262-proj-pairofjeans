@@ -2,6 +2,19 @@ library(jsonlite)
 library(tidyr)
 library(dplyr)
 
+# gtf file (after converting to csv)
+gtf_file <- read.csv("../data/hg38_sequins_SIRV_ERCCs_longSIRVs_v5_reformatted.csv")
+
+# prepping the gtf table to join with the data
+# this table returns the length of the transcript_id based on gtf file 
+gtf.final <- gtf_file %>% 
+  filter(feature == "exon") %>% 
+  select(start, end, gene_id, transcript_id) %>% 
+  mutate(length = end-start) %>% 
+  group_by(gene_id, transcript_id) %>% 
+  summarise(total_len = sum(length))
+colnames(gtf.final)[2] <- "tr_id"
+
 # DRACH motif check, returns 1 if true 0 if false
 is.drach <- function(x){
   if (substr(x,3,3) == "A" & substr(x,4,4) == "C") {
@@ -20,21 +33,21 @@ df.full <- data.frame()
 
 while (length(line <- readLines(con, n=1)) > 0) {
   df <- data.frame(sapply(fromJSON(line, flatten=TRUE), unlist, rec=FALSE))
-
+  
   df <- df %>% 
     mutate(
-    "tr_id" = unlist(strsplit(names(df)[1], split="\\."))[1],
-    "pos" = unlist(strsplit(names(df)[1], split="\\."))[2],
-    "segment" = unlist(strsplit(names(df)[1], split="\\."))[3]) %>%
+      "tr_id" = unlist(strsplit(names(df)[1], split="\\."))[1],
+      "pos" = unlist(strsplit(names(df)[1], split="\\."))[2],
+      "segment" = unlist(strsplit(names(df)[1], split="\\."))[3]) %>%
     dplyr::rename(dwell_time1 = names(df)[1],
-           current_sd1 = names(df)[2],
-           current_mean1 = names(df)[3],
-           dwell_time2 = names(df)[4],
-           current_sd2 = names(df)[5],
-           current_mean2 = names(df)[6],
-           dwell_time3 = names(df)[7],
-           current_sd3 = names(df)[8],
-           current_mean3 = names(df)[9]) %>%
+                  current_sd1 = names(df)[2],
+                  current_mean1 = names(df)[3],
+                  dwell_time2 = names(df)[4],
+                  current_sd2 = names(df)[5],
+                  current_mean2 = names(df)[6],
+                  dwell_time3 = names(df)[7],
+                  current_sd3 = names(df)[8],
+                  current_mean3 = names(df)[9]) %>%
     select(tr_id, pos, segment, everything()) 
   
   df.full <- rbind(df.full, df)
@@ -84,7 +97,15 @@ df.final <-  df.full %>%
   ungroup() %>%
   # joining label to each (transcript_id, position)
   merge(x=.,y=labels,by.x=c("tr_id","pos"), by.y=c("transcript_id","transcript_position"),all.x=TRUE) %>%
-  select(gene_id, tr_id, pos, segment, everything(), label)
+  select(gene_id, tr_id, pos, segment, everything(), label) %>%
+  # find the relative position wrt the max pos of that tr_id
+  mutate(pos = as.numeric(pos)) %>%
+  group_by(tr_id) %>% 
+  mutate(rel_pos_max = pos/max(pos))
+
+# find the position wrt gtf file
+df.final <- merge(df.final, gtf.final[c("tr_id","total_len")], by="tr_id", all.x = TRUE) %>%
+  mutate(gtf_rel_len = pos/total_len)
 
 # TO SAVE DF.FINAL AFTER PARSING
 # write.csv(df.final, "../data/parsedData.csv", row.names = FALSE)
