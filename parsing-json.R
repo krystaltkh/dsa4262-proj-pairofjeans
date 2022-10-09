@@ -43,6 +43,13 @@ close(con)
 
 # Feature engineering
 df.final <-  df.full %>%
+  mutate(dwell_time_diff1 = dwell_time2 - dwell_time1,
+         dwell_time_diff2 = dwell_time3 - dwell_time2,
+         current_mean_diff1 = current_mean2 - current_mean1,
+         current_mean_diff2 = current_mean3 - current_mean2,
+         weighted_current1 = current_mean1 * dwell_time1,
+         weighted_current2 = current_mean2 * dwell_time2,
+         weighted_current3 = current_mean3 * dwell_time3) %>%
   group_by(tr_id, pos, segment) %>%
   dplyr::summarize("num_reads" = n(),
                    "mean_dwell_time1" = mean(dwell_time1),
@@ -56,7 +63,20 @@ df.final <-  df.full %>%
                    "mean_dwell_time3" = mean(dwell_time3),
                    #"mean_current_sd3" = mean(current_sd3),
                    "combined_sd3" = sqrt(sum((current_sd3**2 + (current_mean3 - mean(current_mean3))**2))/n()),
-                   "mean_current_mean3" = mean(current_mean3)) %>%
+                   "mean_current_mean3" = mean(current_mean3),
+                   "mean_current1" = mean(current_mean1),
+                   "mean_dwell_time1" = mean(dwell_time1),
+                   "mean_current2" = mean(current_mean2),
+                   "mean_dwell_time2" = mean(dwell_time2),
+                   "mean_current3" = mean(current_mean3),
+                   "mean_dwell_time3" = mean(dwell_time3),
+                   "mean_dwell_time_diff1" = mean(dwell_time_diff1),
+                   "mean_dwell_time_diff2" = mean(dwell_time_diff2),
+                   "mean_current_diff1" = mean(current_mean_diff1),
+                   "mean_current_diff2" = mean(current_mean_diff2),
+                   "weighted_avg_current1" = sum(weighted_current1) / sum(dwell_time1),
+                   "weighted_avg_current2" = sum(weighted_current2) / sum(dwell_time2),
+                   "weighted_avg_current3" = sum(weighted_current3) / sum(dwell_time3)) %>%
   rowwise() %>%
   mutate("DRACH1" = is.drach(substr(segment,1,5)), 
          "DRACH2"=is.drach(substr(segment,2,6)), 
