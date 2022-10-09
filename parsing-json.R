@@ -2,7 +2,7 @@ library(jsonlite)
 library(tidyr)
 library(dplyr)
 
-# Checks if 5mer follows DRACH motif
+# DRACH motif check, returns 1 if true 0 if false
 is.drach <- function(x){
   if (substr(x,3,3) == "A" & substr(x,4,4) == "C") {
     if (substr(x,1,1) %in% c("A","G","U") & substr(x,2,2) %in% c("A","G") & substr(x,5,5) %in% c("A","C","T")) {
@@ -12,8 +12,10 @@ is.drach <- function(x){
   return(0)
 }
 
+#JSON parser
+labels <- read.csv("../data/data.info")
 con <- file("../data/data.json", open="r")
-df.final <- data.frame()
+df.full <- data.frame()
 
 while (length(line <- readLines(con, n=1)) > 0) {
   df <- data.frame(sapply(fromJSON(line, flatten=TRUE), unlist, rec=FALSE))
@@ -32,18 +34,34 @@ while (length(line <- readLines(con, n=1)) > 0) {
            dwell_time3 = names(df)[7],
            current_sd3 = names(df)[8],
            current_mean3 = names(df)[9]) %>%
-    rowwise() %>% 
-    mutate("rowmean_dwell_time" = mean(c(dwell_time1,dwell_time2,dwell_time3)),
-           "rowmean_current_sd" = mean(c(current_sd1,current_sd2,current_sd3)),
-           "rowmean_current_mean" = mean(c(current_mean1,current_mean2,current_mean3))) %>%
-    mutate("DRACH1" = is.drach(substr(segment,1,5)), 
-           "DRACH2"=is.drach(substr(segment,2,6)), 
-           "DRACH3"=is.drach(substr(segment,3,7))) %>%
     select(tr_id, pos, segment, everything()) 
   
-  df.final <- rbind(df.final, df)
+  df.full <- rbind(df.full, df)
 }
 close(con)
+
+# Feature engineering
+df.final <-  df.full %>%
+  group_by(tr_id, pos, segment) %>%
+  dplyr::summarize("num_reads" = n(),
+                   "mean_dwell_time1" = mean(dwell_time1),
+                   "mean_current_sd1" = mean(current_sd1),
+                   "mean_current_mean1" = mean(current_mean1),
+                   "mean_dwell_time2" = mean(dwell_time2),
+                   "mean_current_sd2" = mean(current_sd2),
+                   "mean_current_mean2" = mean(current_mean2),
+                   "mean_dwell_time3" = mean(dwell_time3),
+                   "mean_current_sd3" = mean(current_sd3),
+                   "mean_current_mean3" = mean(current_mean3)) %>%
+  mutate("DRACH1" = is.drach(substr(segment,1,5)), 
+         "DRACH2"=is.drach(substr(segment,2,6)), 
+         "DRACH3"=is.drach(substr(segment,3,7))) %>%
+  ungroup() %>%
+  # joining label to each (transcript_id, position)
+  merge(x=.,y=labels,by.x=c("tr_id","pos"), by.y=c("transcript_id","transcript_position"),all.x=TRUE) %>%
+  select(gene_id, tr_id, pos, segment, everything(), label)
+
+
 # TO SAVE DF.FINAL AFTER PARSING
 # write.csv(df.final, "../data/parsedData.csv", row.names = FALSE)
 
