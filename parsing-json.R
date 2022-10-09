@@ -68,21 +68,15 @@ df.final <-  df.full %>%
                    "mean_dwell_time1" = mean(dwell_time1),
                    #"mean_current_sd1" = mean(current_sd1),
                    "combined_sd1" = sqrt(sum((current_sd1**2 + (current_mean1 - mean(current_mean1))**2))/n()),
-                   "mean_current_mean1" = mean(current_mean1),
+                   "mean_current1" = mean(current_mean1),
                    "mean_dwell_time2" = mean(dwell_time2),
                    #"mean_current_sd2" = mean(current_sd2),
                    "combined_sd2" = sqrt(sum((current_sd2**2 + (current_mean2 - mean(current_mean2))**2))/n()),
-                   "mean_current_mean2" = mean(current_mean2),
+                   "mean_current2" = mean(current_mean2),
                    "mean_dwell_time3" = mean(dwell_time3),
                    #"mean_current_sd3" = mean(current_sd3),
                    "combined_sd3" = sqrt(sum((current_sd3**2 + (current_mean3 - mean(current_mean3))**2))/n()),
-                   "mean_current_mean3" = mean(current_mean3),
-                   "mean_current1" = mean(current_mean1),
-                   "mean_dwell_time1" = mean(dwell_time1),
-                   "mean_current2" = mean(current_mean2),
-                   "mean_dwell_time2" = mean(dwell_time2),
                    "mean_current3" = mean(current_mean3),
-                   "mean_dwell_time3" = mean(dwell_time3),
                    "mean_dwell_time_diff1" = mean(dwell_time_diff1),
                    "mean_dwell_time_diff2" = mean(dwell_time_diff2),
                    "mean_current_diff1" = mean(current_mean_diff1),
@@ -97,11 +91,12 @@ df.final <-  df.full %>%
   ungroup() %>%
   # joining label to each (transcript_id, position)
   merge(x=.,y=labels,by.x=c("tr_id","pos"), by.y=c("transcript_id","transcript_position"),all.x=TRUE) %>%
-  select(gene_id, tr_id, pos, segment, everything(), label) %>%
   # find the relative position wrt the max pos of that tr_id
   mutate(pos = as.numeric(pos)) %>%
   group_by(tr_id) %>% 
-  mutate(rel_pos_max = pos/max(pos))
+  mutate(rel_pos_max = pos/max(pos)) %>%
+  # final select() to arrange cols and leave label as last col
+  select(gene_id, tr_id, pos, segment, everything(), label)
 
 # find the position wrt gtf file
 df.final <- merge(df.final, gtf.final[c("tr_id","total_len")], by="tr_id", all.x = TRUE) %>%
