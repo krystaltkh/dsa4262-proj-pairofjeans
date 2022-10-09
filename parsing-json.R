@@ -15,6 +15,7 @@ is.drach <- function(x){
 #JSON parser
 labels <- read.csv("../data/data.info")
 con <- file("../data/data.json", open="r")
+
 df.full <- data.frame()
 
 while (length(line <- readLines(con, n=1)) > 0) {
@@ -45,14 +46,18 @@ df.final <-  df.full %>%
   group_by(tr_id, pos, segment) %>%
   dplyr::summarize("num_reads" = n(),
                    "mean_dwell_time1" = mean(dwell_time1),
-                   "mean_current_sd1" = mean(current_sd1),
+                   #"mean_current_sd1" = mean(current_sd1),
+                   "combined_sd1" = sqrt(sum((current_sd1**2 + (current_mean1 - mean(current_mean1))**2))/n()),
                    "mean_current_mean1" = mean(current_mean1),
                    "mean_dwell_time2" = mean(dwell_time2),
-                   "mean_current_sd2" = mean(current_sd2),
+                   #"mean_current_sd2" = mean(current_sd2),
+                   "combined_sd2" = sqrt(sum((current_sd2**2 + (current_mean2 - mean(current_mean2))**2))/n()),
                    "mean_current_mean2" = mean(current_mean2),
                    "mean_dwell_time3" = mean(dwell_time3),
-                   "mean_current_sd3" = mean(current_sd3),
+                   #"mean_current_sd3" = mean(current_sd3),
+                   "combined_sd3" = sqrt(sum((current_sd3**2 + (current_mean3 - mean(current_mean3))**2))/n()),
                    "mean_current_mean3" = mean(current_mean3)) %>%
+  rowwise() %>%
   mutate("DRACH1" = is.drach(substr(segment,1,5)), 
          "DRACH2"=is.drach(substr(segment,2,6)), 
          "DRACH3"=is.drach(substr(segment,3,7))) %>%
@@ -60,7 +65,6 @@ df.final <-  df.full %>%
   # joining label to each (transcript_id, position)
   merge(x=.,y=labels,by.x=c("tr_id","pos"), by.y=c("transcript_id","transcript_position"),all.x=TRUE) %>%
   select(gene_id, tr_id, pos, segment, everything(), label)
-
 
 # TO SAVE DF.FINAL AFTER PARSING
 # write.csv(df.final, "../data/parsedData.csv", row.names = FALSE)
