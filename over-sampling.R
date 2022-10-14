@@ -29,7 +29,6 @@ adas5 <- ADAS(df[,-c(1:4)], df$label, K = 5)
 adas5_df <- adas5$data %>%
   select(-class)
 
-<<<<<<< HEAD
 # ADASYN, K = 10
 adas10 <- ADAS(df[,-c(1:4)], df$label, K = 10)
 adas10_df <- adas10$data %>%
@@ -52,7 +51,3 @@ dbsmoted_df <- dbsmoted$data %>%
 # 
 # ovun <- ovun.sample(label~., data=df, method="both", seed=4262)
 # ovun_df <- ovun$data
-=======
-ovun <- ovun.sample(label~., data=df, method="both", seed=4262)
-ovun_df <- ovun$data
->>>>>>> b3b50be6c41e7f6871333a4e489aedbd01928f3c
