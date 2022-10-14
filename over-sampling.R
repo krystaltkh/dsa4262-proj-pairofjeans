@@ -12,7 +12,6 @@ df <- read_csv("../data/train.csv")
 # create unique_id for combining the over-sampled data back with original data later
 
 df <- df %>% 
-  mutate(unique_id = row_number()) %>%
   filter(!is.na(gtf_rel_len))
 
 
