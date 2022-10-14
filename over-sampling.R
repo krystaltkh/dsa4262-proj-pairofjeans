@@ -1,7 +1,9 @@
-install.packages("smotefamily")
+# install.packages("smotefamily")
+# install.packages("ROSE")
 library(smotefamily)
 library(readr)
 library(dplyr)
+library(ROSE)
 
 set.seed(4262)
 
@@ -13,32 +15,12 @@ df <- df %>%
   mutate(unique_id = row_number()) %>%
   filter(!is.na(gtf_rel_len))
 
-# SMOTE, K = 5
-smoted5 <- SMOTE(df[,-c(1, 2, 4)], df$label, K = 5)
-smoted5_df <- smoted5$data %>%
-  full_join(df[, c(1, 2, 19)], by = "unique_id") %>%
-  select(-c(class))
 
-# SMOTE, K = 10
-smoted10 <- SMOTE(df[,-c(1, 2, 4)], df$label, K = 10)
-smoted10_df <- smoted10$data %>%
-  full_join(df[, c(1, 2, 19)], by = "unique_id") %>%
-  select(-c(class))
+over <- ovun.sample(label~., data=df, method="over", seed = 4262)
+over_df <- over$data
 
-# ADASYN, K = 5
-adas5 <- ADAS(df[,-c(1, 2, 4)], df$label, K = 5)
-adas5_df <- adas5$data %>%
-  full_join(df[, c(1, 2, 19)], by = "unique_id") %>%
-  select(-c(class))
+under <- ovun.sample(label~., data=df, method="under", seed=4262)
+under_df <- under$data
 
-# ADASYN, K = 10
-adas10 <- ADAS(df[,-c(1, 2, 4)], df$label, K = 10)
-adas10_df <- adas10$data %>%
-  full_join(df[, c(1, 2, 19)], by = "unique_id") %>%
-  select(-c(class))
-
-# density-based SMOTE
-dbsmoted <- DBSMOTE(df[,-c(1, 2, 4)], df$label)
-dbsmoted_df <- dbsmoted$data %>%
-  full_join(df[, c(1, 2, 19)], by = "unique_id") %>%
-  select(-c(class))
+ovun <- ovun.sample(label~., data=df, method="both", seed=4262)
+ovun_df <- ovun$data
