@@ -3,8 +3,11 @@ import math
 import pandas as pd
 import os
 
-file_path = input('Enter a file path: ')
+file_path = input('Enter a json dataset file path (.json): ')
 output_file_path = input('Enter an output file path for the parsed csv file: ')
+
+if output_file_path[-3:] != "csv":
+    output_file_path = output_file_path + ".csv"
 
 if os.path.exists(file_path):
     print('The file exists')
