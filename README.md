@@ -21,7 +21,7 @@ In Ubuntu, using screens, run
 screen -S parser
 python3 parser_script.py
 ```
-The script will then prompt you for the JSON dataset file path as well as the output file path to save the parsed data to. Enter the file paths accordingly.
+The script will then prompt you for the JSON dataset file path as well as the output file path to save the parsed data to. Enter the file paths accordingly and the parsing will begin.
 
 ### Data pre-processing
 
