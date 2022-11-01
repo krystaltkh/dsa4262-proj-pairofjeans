@@ -18,7 +18,7 @@ colnames(gtf.final)[2] <- "tr_id"
 # DRACH motif check, returns 1 if true 0 if false
 is.drach <- function(x){
   if (substr(x,3,3) == "A" & substr(x,4,4) == "C") {
-    if (substr(x,1,1) %in% c("A","G","U") & substr(x,2,2) %in% c("A","G") & substr(x,5,5) %in% c("A","C","T")) {
+    if (substr(x,1,1) %in% c("A","G","T") & substr(x,2,2) %in% c("A","G") & substr(x,5,5) %in% c("A","C","T")) {
       return(1)
     }
   }
