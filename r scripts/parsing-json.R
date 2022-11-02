@@ -102,6 +102,58 @@ df.final <-  df.full %>%
 df.final <- merge(df.final, gtf.final[c("tr_id","total_len")], by="tr_id", all.x = TRUE) %>%
   mutate(gtf_rel_len = pos/total_len)
 
+# functions required to find the prop of nucleotide bases in each segment 
+find_prop_A <- function(y) {
+  total = 0
+  input <- y
+  for (x in 1:7) {
+    if (substr(input,x,x) == "A") {
+      total = total + 1
+    }
+  }
+  return(total/7)
+}
+
+find_prop_C <- function(y) {
+  total = 0
+  input <- y
+  for (x in 1:7) {
+    if (substr(input,x,x) == "C") {
+      total = total + 1
+    }
+  }
+  return(total/7)
+}
+
+find_prop_G <- function(y) {
+  total = 0
+  input <- y
+  for (x in 1:7) {
+    if (substr(input,x,x) == "G") {
+      total = total + 1
+    }
+  }
+  return(total/7)
+}
+
+find_prop_T <- function(y) {
+  total = 0
+  input <- y
+  for (x in 1:7) {
+    if (substr(input,x,x) == "T") {
+      total = total + 1
+    }
+  }
+  return(total/7)
+}
+
+df.final <- df.final %>% 
+  rowwise() %>%
+  mutate(prop_A = find_prop_A(segment)) %>%
+  mutate(prop_C = find_prop_C(segment)) %>%
+  mutate(prop_G = find_prop_G(segment)) %>%
+  mutate(prop_T = find_prop_T(segment))
+
 # TO SAVE DF.FINAL AFTER PARSING
 # write.csv(df.final, "../data/parsedData.csv", row.names = FALSE)
 
