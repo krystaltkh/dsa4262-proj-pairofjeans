@@ -3,8 +3,7 @@ library(tidyr)
 library(dplyr)
 
 labels <- read.csv("../data/data.info")
-# dataset <- read.csv("../data/parsed-dataset1.csv")
-dataset <- read.csv("../data/dataset1.csv")
+dataset <- read.csv("../data/parsed-dataset1.csv")
 
 # Feature engineering
 df.final <-  dataset %>%
