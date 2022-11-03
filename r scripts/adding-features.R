@@ -14,7 +14,25 @@ df.final <-  dataset %>%
   group_by(tr_id) %>% 
   mutate(rel_pos_max = pos/max(pos)) %>%
   # final select() to arrange cols and leave label as last col
-  select(gene_id, tr_id, pos, segment, everything(), label)
+  select(gene_id, tr_id, pos, segment, everything(), label) %>%
+  rowwise() %>% # functions will be applied by row
+  mutate(five_segment = substr(segment, 2, 6))
+
+# create polymer combination dataframe, count frequency of combination
+combi <- df.final %>%
+  rowwise() %>%
+  select(five_segment) %>%
+  group_by(five_segment) %>%
+  count()
+
+df.final <- df.final %>%
+  # left join df.final with combi, on "five_segment" column
+  left_join(combi, by="five_segment") %>%
+  # calculate freqRatio of combination
+  mutate(freqRatio = n / nrow(df.final)) %>%
+  # select out five_segment, and n count
+  select(-c(five_segment, n))
+  
 
 #### gtf file (after converting to csv)
 gtf_file <- read.csv("../data/hg38_sequins_SIRV_ERCCs_longSIRVs_v5_reformatted.csv")
