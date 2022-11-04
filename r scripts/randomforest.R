@@ -21,6 +21,7 @@ confusionMatrix(yhat.rf, test$label)
 AUC(as.numeric(levels(yhat.rf))[yhat.rf],as.numeric(levels(test$label))[test$label]) 
 PRAUC(as.numeric(levels(yhat.rf))[yhat.rf],as.numeric(levels(test$label))[test$label]) 
 
+# saveRDS(rf, "trained_rf.rds")
 #########
 
 # without dropping features
