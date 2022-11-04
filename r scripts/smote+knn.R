@@ -97,14 +97,14 @@ for (i in datasets.subin) {
   newdf <- tempdf$data %>%
     select(-c(class, leftC, leftA, prop_A, rightT))
   newdf$label <- as.factor(newdf$label)
-
+  
   # TRAINING
   for (k_val in 1:20) {
     # Probability-KNN, K = 10; knn3
     knn3.train <- knn3(label ~ ., data=newdf, k = k_val)
     knn3.prob <- predict(knn3.train, test_x, type = "prob")
     probs <- cbind(knn3.prob, test$label)
-
+    
     fg <- probs[test$label == 1]
     bg <- probs[test$label == 0]
     
@@ -128,7 +128,7 @@ View(modelData_df)
 
 #### LOOP" SOL'S ####
 datasets.sol <- c("smoted5_df.sol", "smoted10_df.sol", 
-                    "adas5_df.sol", "adas10_df.sol", "dbsmoted_df.sol")
+                  "adas5_df.sol", "adas10_df.sol", "dbsmoted_df.sol")
 
 # sol's
 for (i in datasets.sol) {
