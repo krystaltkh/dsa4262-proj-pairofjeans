@@ -2,6 +2,26 @@ library(randomForest)
 library(caret)
 library(pROC)
 
+######## model
+train <- read.csv("../data/train0_final.csv")
+test <- read.csv("../data/test0_final.csv")
+train <- select(train, -c(1:4,leftC,leftA,prop_A,rightT))
+test <- select(test, -c(1:4,leftC,leftA,prop_A,rightT))
+train$label <- as.character(train$label)
+train$label <- as.factor(train$label)
+test$label <- as.character(test$label)
+test$label <- as.factor(test$label)
+
+set.seed(4262)
+rf <- randomForest(label ~ ., train, mtry=floor(sqrt(ncol(train))), ntree=300, importance = TRUE, do.trace = 10)
+yhat.rf <- predict(rf, newdata = test[,-ncol(test)])
+mean((as.numeric(levels(yhat.rf))[yhat.rf] - as.numeric(levels(test$label))[test$label])^2) 
+confusionMatrix(yhat.rf, test$label) 
+AUC(as.numeric(levels(yhat.rf))[yhat.rf],as.numeric(levels(test$label))[test$label]) 
+PRAUC(as.numeric(levels(yhat.rf))[yhat.rf],as.numeric(levels(test$label))[test$label]) 
+
+#########
+
 # x <- read.csv("../data/parsed_A549_rep6_run1.txt")
 # write.csv(x, "../data/parsed_A549_rep6_run1.csv")
 test <- read.csv("../data/test.csv")
