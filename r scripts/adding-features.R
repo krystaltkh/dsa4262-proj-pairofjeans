@@ -3,7 +3,7 @@ library(tidyr)
 library(dplyr)
 
 labels <- read.csv("../data/data.info")
-dataset <- read.csv("../data/imputed_test0.csv")
+dataset <- read.csv("../data/dataset1.csv")
 
 # Feature engineering
 # functions required to find the prop of nucleotide bases in each segment 
@@ -51,6 +51,7 @@ find_prop_T <- function(y) {
   return(total/7)
 }
 
+max_reads <- max(dataset$num_reads)
 df.final <- dataset %>% 
   rowwise() %>%
   mutate(prop_A = find_prop_A(segment),
@@ -64,9 +65,11 @@ df.final <- dataset %>%
          rightA = ifelse(substr(segment,7,7) == 'A',1,0),
          rightC = ifelse(substr(segment,7,7) == 'C',1,0),
          rightT = ifelse(substr(segment,7,7) == 'T',1,0),
-         rightG = ifelse(substr(segment,7,7) == 'G',1,0)) %>% 
+         rightG = ifelse(substr(segment,7,7) == 'G',1,0),
+         num_reads_weighted = num_reads/max_reads) %>% 
   rowwise() %>% # functions will be applied by row
-  mutate(five_segment = substr(segment, 2, 6))
+  mutate(five_segment = substr(segment, 2, 6)) %>%
+  select(-n_reads)
 
 # create polymer combination dataframe, count frequency of combination
 combi <- df.final %>%
