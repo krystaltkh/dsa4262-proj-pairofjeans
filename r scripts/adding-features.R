@@ -52,12 +52,15 @@ find_prop_T <- function(y) {
 }
 
 max_reads <- max(dataset$num_reads)
+
 df.final <- dataset %>% 
   rowwise() %>%
+  # adding proportion of A C T G nucleotide
   mutate(prop_A = find_prop_A(segment),
          prop_C = find_prop_C(segment),
          prop_G = find_prop_G(segment),
          prop_T = find_prop_T(segment),
+         # adding one hot encoded A C T G nucleotide for left right neighbour of center 5-mer
          leftA = ifelse(substr(segment,1,1) == 'A',1,0),
          leftC = ifelse(substr(segment,1,1) == 'C',1,0),
          leftT = ifelse(substr(segment,1,1) == 'T',1,0),
@@ -66,10 +69,11 @@ df.final <- dataset %>%
          rightC = ifelse(substr(segment,7,7) == 'C',1,0),
          rightT = ifelse(substr(segment,7,7) == 'T',1,0),
          rightG = ifelse(substr(segment,7,7) == 'G',1,0),
+         # adding weighted number of reads  
          num_reads_weighted = num_reads/max_reads) %>% 
   rowwise() %>% # functions will be applied by row
   mutate(five_segment = substr(segment, 2, 6)) %>%
-  select(-n_reads)
+  select(-num_reads)
 
 # create polymer combination dataframe, count frequency of combination
 combi <- df.final %>%
