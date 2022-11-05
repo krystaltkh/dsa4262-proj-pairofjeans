@@ -16,7 +16,7 @@ The /sample_data directory contains the saved trained model (trained_rf.rds), sa
 ```
 sudo Rscript do_prediction.R trained_rf.rds sample_data.csv
 ```
-Once the script completes, the predictions are saved as a file titled predictions.csv. To view the file from the terminal, run 
+Once the script completes, the predictions are saved as a file titled predictions.csv. The predictions.csv file contains (transcript_id, position, segment and predicted_label) for each row in the sample data. To view the file from the terminal, run 
 ```
 vi predictions.csv
 ```
