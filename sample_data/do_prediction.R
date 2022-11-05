@@ -7,7 +7,7 @@ if (length(args)==0) {
   stop("Insufficient arguments supplied. Require (model.rds) and (sample data)", call.=FALSE)
 } 
 .libPaths("/usr/lib/R/library")
-install.packages("https://cran.r-project.org/src/contrib/Archive/randomForest/randomForest_3.4-5.tar.gz",repos=NULL, type="source")
+install.packages("https://cran.r-project.org/src/contrib/Archive/randomForest/randomForest_4.6-14.tar.gz",repos=NULL, type="source")
 library(randomForest)
 model <- readRDS(args[1])
 df <- read.csv(args[2])
