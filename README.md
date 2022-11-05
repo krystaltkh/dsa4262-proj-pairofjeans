@@ -44,5 +44,5 @@ python3 parser_script.py
 The script will then prompt you for the JSON dataset file path as well as the output file path to save the parsed data to. Enter the file paths (with appropriate file extensions eg. .json) accordingly and the parsing will begin.
 
 ### Data processing and Model training
-Our group utilises R to generate new features and train our models. All R scripts can be found in the r-scripts directory. Instructions to follow and documentations are found in the r scripts.
+Our group utilises R to generate new features and train our models. All R scripts can be found in the r-scripts directory. Instructions to follow and documentations are found in the r scripts. For adding new features, look at adding-features.R. The R script for models trained are appropriately titled i.e. smote+knn.R for kNN model, smote+xgboost.R for XGBoost model.
 
