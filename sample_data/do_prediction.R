@@ -27,7 +27,7 @@ tryCatch(
     message(cond)
   }
 )
-try(
+tryCatch(
   {
     if (confirm=='y') {
       .libPaths("/usr/lib/R/library")
