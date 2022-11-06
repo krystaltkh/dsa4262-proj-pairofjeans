@@ -31,7 +31,7 @@ tryCatch(
   {
     if (confirm=='y') {
       .libPaths("/usr/lib/R/library")
-      install.packages("https://cran.r-project.org/src/contrib/Archive/randomForest/randomForest_4.6-14.tar.gz",repos=NULL, type="source", verbose = FALSE)
+      install.packages("https://cran.r-project.org/src/contrib/Archive/randomForest/randomForest_4.6-14.tar.gz",lib = "/usr/lib/R/library", quiet = TRUE, verbose = FALSE)
       library(randomForest)
       label <- as.data.frame(predict(model, newdata=df[5:28], type='response'))
       preds <- cbind(df[1:4],label)
