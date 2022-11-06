@@ -19,7 +19,6 @@ tryCatch(
   },
   error=function(cond) {
     message(cond)
-    confirm <- readLines(prompt = "install older version of randomForest and continue prediction?(y/n/c) : ")
     return(NULL)
   },
   warning=function(cond) {
@@ -28,6 +27,7 @@ tryCatch(
     return(NULL)
   }
 )
+confirm <- readline(prompt = "install older version of randomForest and continue prediction?(y/n/c) : ")
 if (confirm=='y') {
   .libPaths("/usr/lib/R/library")
   install.packages("https://cran.r-project.org/src/contrib/Archive/randomForest/randomForest_4.6-14.tar.gz",repos=NULL, type="source")
