@@ -27,7 +27,7 @@ tryCatch(
     message(cond)
   }
 )
-tryCatch(
+try(
   {
     if (confirm=='y') {
       .libPaths("/usr/lib/R/library")
@@ -37,6 +37,9 @@ tryCatch(
       preds <- cbind(df[1:4],label)
       write.csv(preds, "predictions.csv")
     }
+  },
+  error=function(e){
+    cat("Specify y/n for third argument to install compatible randomForest package.\n")
   }
 )
 
