@@ -16,7 +16,7 @@ The /sample_data directory contains the saved trained model (trained_rf.rds), sa
 
 WARNING: do_prediction.R will attempt to install previous version of randomForest in the case of errors as randomForest::predict is required for predictions.
 ```
-sudo Rscript do_prediction.R trained_rf.rds sample_data.csv
+sudo Rscript do_prediction.R trained_rf.rds sample_data.csv y
 ```
 Once the script completes, the predictions are saved as a file titled predictions.csv. The predictions.csv file contains (transcript_id, position, segment and predicted_label) for each row in the sample data. To view the file from the terminal, run 
 ```
