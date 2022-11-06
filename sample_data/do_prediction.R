@@ -20,6 +20,7 @@ tryCatch(
   },
   error=function(cond) {
     message(cond)
+    cat("\n")
   },
   warning=function(cond) {
     message("Here's the original warning message:")
