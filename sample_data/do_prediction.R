@@ -27,15 +27,19 @@ tryCatch(
     message(cond)
   }
 )
+try(
+  {
+    if (confirm=='y') {
+      .libPaths("/usr/lib/R/library")
+      install.packages("https://cran.r-project.org/src/contrib/Archive/randomForest/randomForest_4.6-14.tar.gz",repos=NULL, type="source")
+      library(randomForest)
+      label <- as.data.frame(predict(model, newdata=df[5:28], type='response'))
+      preds <- cbind(df[1:4],label)
+      write.csv(preds, "predictions.csv")
+    }
+  }
+)
 
-if (confirm=='y') {
-  .libPaths("/usr/lib/R/library")
-  install.packages("https://cran.r-project.org/src/contrib/Archive/randomForest/randomForest_4.6-14.tar.gz",repos=NULL, type="source")
-  library(randomForest)
-  label <- as.data.frame(predict(model, newdata=df[5:28], type='response'))
-  preds <- cbind(df[1:4],label)
-  write.csv(preds, "predictions.csv")
-}
 
 # preds <- cbind(df[1:4],label)
 # write.csv(preds, "predictions.csv")
