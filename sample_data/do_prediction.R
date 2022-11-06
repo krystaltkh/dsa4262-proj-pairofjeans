@@ -8,9 +8,10 @@ if (length(args)==0) {
 # .libPaths("/usr/lib/R/library")
 # install.packages("https://cran.r-project.org/src/contrib/Archive/randomForest/randomForest_4.6-14.tar.gz",repos=NULL, type="source")
 # library(randomForest)
+
 model <- readRDS(args[1])
 df <- read.csv(args[2])
-
+confirm <- args[3]
 tryCatch(
   {
     label <- as.data.frame(predict(model, newdata=df[5:28], type='response'))
@@ -19,15 +20,13 @@ tryCatch(
   },
   error=function(cond) {
     message(cond)
-    return(NULL)
   },
   warning=function(cond) {
     message("Here's the original warning message:")
     message(cond)
-    return(NULL)
   }
 )
-confirm <- readline(prompt = "install older version of randomForest and continue prediction?(y/n/c) : ")
+
 if (confirm=='y') {
   .libPaths("/usr/lib/R/library")
   install.packages("https://cran.r-project.org/src/contrib/Archive/randomForest/randomForest_4.6-14.tar.gz",repos=NULL, type="source")
