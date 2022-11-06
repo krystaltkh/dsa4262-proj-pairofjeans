@@ -1,25 +1,49 @@
 
-
 args = commandArgs(trailingOnly=TRUE)
 if (length(args)==0) {
   stop("At least one argument must be supplied (input file).n", call.=FALSE)
 } else if (length(args)==1) {
   stop("Insufficient arguments supplied. Require (model.rds) and (sample data)", call.=FALSE)
 } 
-.libPaths("/usr/lib/R/library")
-install.packages("https://cran.r-project.org/src/contrib/Archive/randomForest/randomForest_4.6-14.tar.gz",repos=NULL, type="source")
-library(randomForest)
+# .libPaths("/usr/lib/R/library")
+# install.packages("https://cran.r-project.org/src/contrib/Archive/randomForest/randomForest_4.6-14.tar.gz",repos=NULL, type="source")
+# library(randomForest)
+
 model <- readRDS(args[1])
 df <- read.csv(args[2])
-label <- as.data.frame(predict(model, newdata=df[5:28], type='response'))
-preds <- cbind(df[1:4],label)
-write.csv(preds, "predictions.csv")
+confirm <- args[3]
+tryCatch(
+  {
+    label <- as.data.frame(predict(model, newdata=df[5:28], type='response'))
+    preds <- cbind(df[1:4],label)
+    write.csv(preds, "predictions.csv")
+  },
+  error=function(cond) {
+    message(cond)
+    cat("\n")
+  },
+  warning=function(cond) {
+    message("Here's the original warning message:")
+    message(cond)
+  }
+)
+tryCatch(
+  {
+    if (confirm=='y') {
+      .libPaths("/usr/lib/R/library")
+      install.packages("https://cran.r-project.org/src/contrib/Archive/randomForest/randomForest_4.6-14.tar.gz",repos=NULL,lib = "/usr/lib/R/library", quiet = TRUE, verbose = FALSE)
+      suppressMessages(library(randomForest))
+      label <- as.data.frame(predict(model, newdata=df[5:28], type='response'))
+      preds <- cbind(df[1:4],label)
+      write.csv(preds, "predictions.csv")
+    }
+  }, 
+  error=function(e){
+    cat("Specify y/n for third argument for Rscript to install compatible randomForest package.\n")
+    cat("WARNING: input of y for third argument will install older version of randomForest package.")
+  }
+)
 
 
-###delete
-# testt <- "sample-data.csv"
-# d <- read.csv(testt)
-# View(d[5:28])
-# m <- readRDS("trained_rf.rds")
-# label <- predict(m,d[5:28],type = 'response')
-# cbind(d[1:4],as.data.frame(label))
+# preds <- cbind(df[1:4],label)
+# write.csv(preds, "predictions.csv")
