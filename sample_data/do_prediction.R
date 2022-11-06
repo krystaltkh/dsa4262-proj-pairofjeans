@@ -31,13 +31,13 @@ tryCatch(
   {
     if (confirm=='y') {
       .libPaths("/usr/lib/R/library")
-      install.packages("https://cran.r-project.org/src/contrib/Archive/randomForest/randomForest_4.6-14.tar.gz",lib = "/usr/lib/R/library", quiet = TRUE, verbose = FALSE)
+      suppressMessages(install.packages("https://cran.r-project.org/src/contrib/Archive/randomForest/randomForest_4.6-14.tar.gz",lib = "/usr/lib/R/library", quiet = TRUE, verbose = FALSE))
       library(randomForest)
       label <- as.data.frame(predict(model, newdata=df[5:28], type='response'))
       preds <- cbind(df[1:4],label)
       write.csv(preds, "predictions.csv")
     }
-  },
+  }, 
   error=function(e){
     cat("Specify y/n for third argument to install compatible randomForest package.\n")
     cat("WARNING: input of y for third argument will install older version of randomForest package.")
