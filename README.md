@@ -13,6 +13,8 @@ git clone https://github.com/krystaltkh/dsa4262-proj-pairofjeans.git
 cd dsa4262-proj-pairofjeans/sample_data
 ```
 The /sample_data directory contains the saved trained model (trained_rf.rds), sample data of 100 rows (sample_data.csv) and the R script to do predictions (do_predictions.R). The R script can be used to predict other datasets but will require running the data processing steps first to generate new features from the raw dataset.
+
+WARNING: do_prediction.R will attempt to install previous version of randomForest in the case of errors as randomForest::predict is required for predictions.
 ```
 sudo Rscript do_prediction.R trained_rf.rds sample_data.csv
 ```
