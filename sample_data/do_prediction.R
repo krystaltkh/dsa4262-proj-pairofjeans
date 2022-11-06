@@ -39,7 +39,7 @@ tryCatch(
     }
   }, 
   error=function(e){
-    cat("Specify y/n for third argument to install compatible randomForest package.\n")
+    cat("Specify y/n for third argument for Rscript to install compatible randomForest package.\n")
     cat("WARNING: input of y for third argument will install older version of randomForest package.")
   }
 )
